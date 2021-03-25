@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  Size _screenResolution = Size(0, 0);
 
   @override
   void initState() {
@@ -24,12 +24,12 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
+    Size screenResolution;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await NativeScreenResolution.screenResolution;
+      screenResolution = await NativeScreenResolution.screenResolution;
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      screenResolution = Size(0, 0);
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _screenResolution = screenResolution;
     });
   }
 
@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Running on: $_screenResolution\n'),
         ),
       ),
     );

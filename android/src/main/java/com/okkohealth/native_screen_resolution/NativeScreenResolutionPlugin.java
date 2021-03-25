@@ -84,7 +84,7 @@ public class NativeScreenResolutionPlugin implements FlutterPlugin, MethodCallHa
           Measuredwidth = size.y;
       }
 
-      result.success("{width:" + Measuredwidth + ",height:"+Measuredheight + "}");
+      result.success("{\"width\":" + Measuredwidth + ",\"height\":"+Measuredheight + "}");
     } else {
       result.notImplemented();
     }
