@@ -9,9 +9,9 @@ public class SwiftNativeScreenResolutionPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    let screenRect = UIScreen.main.bounds
-    let screenWidth = screenRect.size.width*2
-    let screenHeight = screenRect.size.height*2
+    let screenRect = UIScreen.main.nativeBounds
+    let screenWidth = screenRect.size.width
+    let screenHeight = screenRect.size.height
 
     result("{\"width\":\(screenWidth),\"height\":\(screenHeight)}")
   }

@@ -3,9 +3,13 @@ package com.okkohealth.native_screen_resolution;
 import androidx.annotation.NonNull;
 
 import android.app.Activity;
+import android.graphics.Rect;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.graphics.Point;
+import android.view.WindowMetrics;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -24,6 +28,7 @@ public class NativeScreenResolutionPlugin implements FlutterPlugin, MethodCallHa
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
   private Activity activity;
+  private static final String TAG = "NativeResolution";
   
   @Override
   public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
@@ -66,16 +71,26 @@ public class NativeScreenResolutionPlugin implements FlutterPlugin, MethodCallHa
       int Measuredwidth = 0;  
       int Measuredheight = 0;  
       Point size = new Point();
-      WindowManager w = activity.getWindowManager();
-          Display display = w.getDefaultDisplay();
+       WindowManager w = activity.getWindowManager();
+       Display display = w.getDefaultDisplay();
+//      DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
+//      size.x = displayMetrics.widthPixels;
+//      size.y = displayMetrics.heightPixels;
 
-      if (android.os.Build.VERSION.SDK_INT >= 19) {
-        // include navigation bar
-        display.getRealSize(size);
-      } else {
-          // exclude navigation bar
-          display.getSize(size);
-      }
+       if (android.os.Build.VERSION.SDK_INT >= 31) {
+         // include navigation bar
+         WindowMetrics windowMetrics = w.getMaximumWindowMetrics();
+         Rect bounds = windowMetrics.getBounds();
+         size.x = bounds.width();
+         size.y = bounds.height();
+       }
+       else if (android.os.Build.VERSION.SDK_INT >= 17) {
+         // include navigation bar
+         display.getRealSize(size);
+       } else {
+           // exclude navigation bar
+           display.getSize(size);
+       }
       if (size.y > size.x) {
           Measuredheight = size.y;
           Measuredwidth = size.x;
@@ -83,6 +98,7 @@ public class NativeScreenResolutionPlugin implements FlutterPlugin, MethodCallHa
           Measuredheight = size.x;
           Measuredwidth = size.y;
       }
+      Log.i(TAG,String.format("DisplayMetrics size: %d, %d", size.x, size.y));
 
       result.success("{\"width\":" + Measuredwidth + ",\"height\":"+Measuredheight + "}");
     } else {
